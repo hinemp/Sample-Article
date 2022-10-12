@@ -1,3 +1,69 @@
 main {
   padding: 5%;
+  max-width: 1000px;
+  margin: auto;
+}
+
+header {
+  max-height: 100px;
+}
+
+header > img {
+  display: block;
+  height: 100px;
+  padding: 1%;
+  object-fit: contain;
+}
+
+.nav-link > img {
+  display: block;
+  max-width: 40px;
+  width: auto;
+  height: auto;
+}
+
+.nav-link > a {
+  align-self: baseline;
+}
+
+li {
+  margin: 5px;
+}
+
+.agent_updates {
+  text-align: center;
+}
+
+.map_updates {
+  text-align: center;
+}
+
+.bug_fixes > h3 {
+  text-align: center;
+}
+
+.divider {
+  position: relative;
+  margin-top: 20px;
+  height: 20px;
+}
+
+.div-transparent:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 5%;
+  right: 5%;
+  width: 90%;
+  height: 1px;
+  background-image: linear-gradient(
+    to right,
+    transparent,
+    rgb(48, 49, 51),
+    transparent
+  );
+}
+
+article > h1 {
+  font-size: 4rem;
 }

@@ -1,0 +1,32 @@
+.box {
+  display: flex;
+  /* max-height: 500px; */
+  margin: auto;
+}
+
+.box > img {
+  display: block;
+  max-width: 230px;
+  max-height: 300px;
+  width: auto;
+  height: auto;
+  padding: 1%;
+  align-self: center;
+}
+p {
+  font-style: italic;
+}
+.box > p {
+  text-align: left;
+  align-self: center;
+  font-style: normal;
+}
+
+.box > h4 {
+  margin-top: 2%;
+  text-align: left;
+}
+
+h5 {
+  font-weight: 600;
+}

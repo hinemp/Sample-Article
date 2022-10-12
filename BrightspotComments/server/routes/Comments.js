@@ -2,11 +2,17 @@ const express = require("express");
 const router = express.Router();
 const Comments = require("../models/").Comments;
 
+/**
+ * Get all comments
+ */
 router.get("/", async (req, res) => {
   const list = await Comments.findAll();
   return res.json(list);
 });
 
+/**
+ * Get all replies to a comment
+ */
 router.get("/replies/:id", async (req, res) => {
   const replies = await Comments.findAll({
     where: { parent_id: req.params.id },
@@ -14,6 +20,9 @@ router.get("/replies/:id", async (req, res) => {
   res.json(replies);
 });
 
+/**
+ * Get a specific comment
+ */
 router.get("/:id", async (req, res) => {
   const comment = await Comments.findAll({ where: { id: req.params.id } });
   res.json(comment);
@@ -29,13 +38,9 @@ router.post("/", async (req, res) => {
 });
 
 /**
- * SHOULDN'T BE PUBLICLY ACCESSIBLE
+ * Soft-delete implementation, unused
  */
 router.patch("/:id", async (req, res) => {
-  // Sneaky little trick
-  // Never actually delete the comment, just change username & text to 'deleted'
-  // Makes it much easier to use a recursive implementation
-  // If reddit can get away with it...
   const updated = await Comments.update(
     { comment_text: "deleted", user: "deleted" },
     { where: { id: req.params.id } }
@@ -43,9 +48,36 @@ router.patch("/:id", async (req, res) => {
   res.json(updated);
 });
 
+/**
+ * Hard delete
+ */
+router.delete("/:id", async (req, res) => {
+  await Comments.destroy({ where: { id: req.params.id } });
+  res.json("Comment Deleted");
+});
+
+/**
+ * Delete all comments that were soft-deleted
+ */
 router.delete("/cleanup", async (req, res) => {
   await Comments.destroy({ where: { user: "deleted" } });
   res.json("Cleanup Completed");
+});
+
+/**
+ * Like a comment
+ */
+router.post("/like/:id", async (req, res) => {
+  await Comments.increment("likes", { by: 1, where: { id: req.params.id } });
+  res.json("Liked Comment");
+});
+
+/**
+ * Dislike a comment
+ */
+router.post("/dislike/:id", async (req, res) => {
+  await Comments.decrement("likes", { by: 1, where: { id: req.params.id } });
+  res.json("Disliked Comment");
 });
 
 module.exports = router;

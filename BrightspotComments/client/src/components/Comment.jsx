@@ -1,22 +1,39 @@
 import { useState } from "react";
-import { FaEdit, FaHeart, FaReply, FaTrash } from "react-icons/fa";
+import { FaHeart, FaRegHeart, FaReply, FaTrash } from "react-icons/fa";
+import {
+  dislikeComment,
+  hardDeleteComment,
+  likeComment,
+} from "../services/comments";
 import "../styles/comment.css";
-import CommentForm from "./CommentForm";
 import CommentList from "./CommentList";
 import IconBtn from "./IconBtn";
+import ReplyForm from "./ReplyForm";
 
 const dateFormatter = new Intl.DateTimeFormat(undefined, {
   dateStyle: "medium",
   timeStyle: "short",
 });
 
-const Comment = ({ comment, relation }) => {
+const Comment = ({ comment, relation, setCommentCount }) => {
   // // Get all children from relation
   let children = [];
   if (comment.id in relation) children = relation[comment.id];
 
   const [areChildrenHidden, setAreChildrenHidden] = useState(false);
   const [isReplying, setIsReplying] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
+
+  async function deleteHandler(e) {
+    await hardDeleteComment(comment.id);
+    setCommentCount((prev) => prev - 1);
+  }
+
+  async function likeHandler(e) {
+    isLiked ? await dislikeComment(comment.id) : await likeComment(comment.id);
+    setIsLiked((prev) => !prev);
+    setCommentCount((prev) => prev - 1);
+  }
 
   return (
     <>
@@ -29,7 +46,11 @@ const Comment = ({ comment, relation }) => {
         </div>
         <div className="message">{comment.comment_text}</div>
         <div className="footer">
-          <IconBtn Icon={FaHeart} aria-label="Like">
+          <IconBtn
+            onClick={(e) => likeHandler(e)}
+            Icon={isLiked ? FaHeart : FaRegHeart}
+            aria-label="Like"
+          >
             {comment.likes}
           </IconBtn>
           <IconBtn
@@ -38,13 +59,22 @@ const Comment = ({ comment, relation }) => {
             Icon={FaReply}
             aria-label={isReplying ? "Cancel Reply" : "Reply"}
           />
-          <IconBtn Icon={FaEdit} aria-label="Edit" />
-          <IconBtn Icon={FaTrash} aria-label="Delete" color={"danger"} />
+          <IconBtn
+            onClick={(e) => deleteHandler(e)}
+            Icon={FaTrash}
+            aria-label="Delete"
+            color={"danger"}
+          />
         </div>
       </div>
       {isReplying && (
-        <div className="mt-1 m-3">
-          <CommentForm />
+        <div className="mt-1 ml-3">
+          <ReplyForm
+            autoFocus={true}
+            parent_id={comment.id}
+            setCommentCount={setCommentCount}
+            setIsReplying={setIsReplying}
+          ></ReplyForm>
         </div>
       )}
       {children?.length > 0 && (
@@ -60,6 +90,7 @@ const Comment = ({ comment, relation }) => {
                 comments={children}
                 relation={relation}
                 key={comment.id}
+                setCommentCount={setCommentCount}
               ></CommentList>
             </div>
           </div>

@@ -1,0 +1,20 @@
+.map_box {
+  display: flex;
+  flex-direction: column;
+  /* max-height: 500px; */
+  margin: auto;
+}
+
+.map_box > img {
+  display: block;
+  /* max-width: 533px; */
+  max-height: 400px;
+  width: auto;
+  height: auto;
+  padding: 1%;
+  align-self: center;
+}
+
+.map_box > span {
+  align-self: center;
+}
